@@ -9,7 +9,6 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-const Employee = require("./lib/Employee");
 
 const employeeArray = [];
 
@@ -17,7 +16,7 @@ const questions = [
     {
         type: "list",
         message: "What type of employee is being added?",
-        name: "employee",
+        name: "employeeType",
         choices: [
             "Manager",
             "Engineer",
@@ -27,28 +26,36 @@ const questions = [
     {
         type: "input",
         message: "What is the Employee's name?",
-        name: "name"
+        name: "empName"
     },
     {
         type: "input",
         message: "What is the Employee's id number?",
-        name: "id"
+        name: "empId"
     },
     {
         type: "input",
         message: "What is the Employee's email address?",
-        name: "email"
+        name: "empEmail"
     }
 ]
 
 function anotherEmp(){
-    inquierer.prompt({
+    inquirer.prompt({
         type: "confirm",
-        message: "Add another employee?",
+        message: "Add another Employee?",
         name: "another"
     }).then((response) => {
-        if(response === "y"){
+        if(response.another === true){
             employeeType()
+        }else { 
+            console.log(employeeArray)
+            const renderedHTML = render(employeeArray);
+            fs.writeFile(outputPath, renderedHTML, function(err){
+                if(err){
+                    return console.log(err)
+                }
+            })
         }
     })
 }
@@ -57,49 +64,49 @@ function anotherEmp(){
 function employeeType() {
     inquirer.prompt(questions)
     .then((answers) => {
-        if(answers.employee === "Manager") {
+        if(answers.employeeType === "Manager") {
             inquirer.prompt([
                 {
                     type: "input",
-                    message: "What is your Office Number?",
-                    name: "number"
+                    message: "What is the Employee's office number?",
+                    name: "officeNumber"
                 }
             ])
             .then(data => {
-                var managerNumber = data.number;
-                console.log(managerNumber);
-                employeeArray.push(new Manager(answers.name, answers.id, answers.email, managerNumber))
-                console.log(employeeArray)
+                var managerNumber = data.officeNumber;
+                let manager = new Manager(answers.empName, answers.empId, answers.empEmail, managerNumber)
+                employeeArray.push(manager)
+                anotherEmp();
             })
         }
-        else if(answers.employee === "Engineer"){
+        else if(answers.employeeType === "Engineer"){
             inquirer.prompt([
                 {
                     type: "input",
-                    message: "What is your GitHub username?",
+                    message: "What is the Employee's GitHub username?",
                     name: "github"
                 }
             ])
             .then(data => {
                 var engGithub = data.github;
-                console.log(engGithub);
-                employeeArray.push(new Engineer(answers.name, answers.id, answers.email, engGithub))
-                console.log(employeeArray)
+                let engineer = new Engineer(answers.empName, answers.empId, answers.empEmail, engGithub)
+                employeeArray.push(engineer)
+                anotherEmp();
             })
         }
-        else if(answers.employee === "Intern"){
+        else if(answers.employeeType === "Intern"){
             inquirer.prompt([
                 {
                     type: "input",
-                    message: "What School did/do you attend?",
+                    message: "What School did/does the Employee attend?",
                     name: "school"
                 }
             ])
             .then(data => {
                 var internSchool = data.school;
-                console.log(internSchool);
-                employeeArray.push(new Intern(answers.name, answers.id, answers.email, internSchool))
-                console.log(employeeArray)
+                let intern = new Intern(answers.empName, answers.empId, answers.empEmail, internSchool)
+                employeeArray.push(intern)
+                anotherEmp();
             })
         };
     }
