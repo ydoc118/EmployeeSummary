@@ -46,6 +46,6 @@ or visit my GitHub to see more of my work at [Ydoc118](https://github.com/Ydoc11
 
 ## Image of Repo
 
-![Image of repo!](./lib/week10img.png)
+![Image of repo!](Develop/lib/week10img.png)
 
      
