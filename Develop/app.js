@@ -9,12 +9,15 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const Employee = require("./lib/Employee");
+
+const employeeArray = [];
 
 const questions = [
     {
         type: "list",
         message: "What type of employee is being added?",
-        name: "Employee",
+        name: "employee",
         choices: [
             "Manager",
             "Engineer",
@@ -35,15 +38,74 @@ const questions = [
         type: "input",
         message: "What is the Employee's email address?",
         name: "email"
-    },
-    {
-        type: "confirm",
-        message: "Do you have another employee to add?",
-        name: "newEmployee"
     }
-
-    
 ]
+
+function anotherEmp(){
+    inquierer.prompt({
+        type: "confirm",
+        message: "Add another employee?",
+        name: "another"
+    }).then((response) => {
+        if(response === "y"){
+            employeeType()
+        }
+    })
+}
+
+
+function employeeType() {
+    inquirer.prompt(questions)
+    .then((answers) => {
+        if(answers.employee === "Manager") {
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "What is your Office Number?",
+                    name: "number"
+                }
+            ])
+            .then(data => {
+                var managerNumber = data.number;
+                console.log(managerNumber);
+                employeeArray.push(new Manager(answers.name, answers.id, answers.email, managerNumber))
+                console.log(employeeArray)
+            })
+        }
+        else if(answers.employee === "Engineer"){
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "What is your GitHub username?",
+                    name: "github"
+                }
+            ])
+            .then(data => {
+                var engGithub = data.github;
+                console.log(engGithub);
+                employeeArray.push(new Engineer(answers.name, answers.id, answers.email, engGithub))
+                console.log(employeeArray)
+            })
+        }
+        else if(answers.employee === "Intern"){
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "What School did/do you attend?",
+                    name: "school"
+                }
+            ])
+            .then(data => {
+                var internSchool = data.school;
+                console.log(internSchool);
+                employeeArray.push(new Intern(answers.name, answers.id, answers.email, internSchool))
+                console.log(employeeArray)
+            })
+        };
+    }
+)}
+
+employeeType()
 
 
 // Write code to use inquirer to gather information about the development team members,
